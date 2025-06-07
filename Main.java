@@ -1,11 +1,11 @@
 import algorithms.ClrsApx;
-import algorithms.HeldKarp;
+import algorithms.MyOwn;
 import java.io.*;
 
 class Main{
     public static void main(String[] args) throws IOException {
-        String filename = "ulysses22.tsp";
-        String optfilename = "dataset/ulysses22.opt.tour";
+        String filename = "kz9976.tsp";
+        String optfilename = "dataset/kz9976.tour";
         // double[][] distMatrix = TspParser.parseTSPFile(filename);
         double[][] xyList = TspParser.parseTSPFile2("dataset/" + filename);
 
@@ -13,7 +13,7 @@ class Main{
         long beforeUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long startTime = System.nanoTime();
 
-        int[] tour = HeldKarp.HeldKarpTour(xyList);
+        int[] tour = MyOwn.HKGreedySubTour(xyList);
 
         long endTime = System.nanoTime();
         long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -22,6 +22,7 @@ class Main{
         double usedMemory = (afterUsedMem - beforeUsedMem) / (1024.0 * 1024.0); // MB
 
         makeTour.TourFile(tour, "output/" + filename + "_output.tour");
+        makePng.drawTourToPNG(xyList, tour, "output/" + filename + "_output.png");
 
         double cost = 0.0;
         for (int i = 0; i < tour.length - 1; i++) {

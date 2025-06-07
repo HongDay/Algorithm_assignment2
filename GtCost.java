@@ -1,8 +1,10 @@
 import java.io.*;
 import java.util.*;
 
+import algorithms.ClrsApx;
+
 public class GtCost {
-    public static double CalCost(String filename, double[][] distMatrix) throws IOException {
+    public static double CalCost(String filename, double[][] xyList) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(filename));
         List<Integer> tour = new ArrayList<>();
         String line;
@@ -18,9 +20,9 @@ public class GtCost {
 
         double cost = 0.0;
         for (int i = 0; i < tour.size() - 1; i++) {
-            cost += distMatrix[tour.get(i)][tour.get(i + 1)];
+            cost += ClrsApx.distance(xyList, tour.get(i), tour.get(i+1));
         }
-        cost += distMatrix[tour.get(tour.size() - 1)][tour.get(0)];
+        cost += ClrsApx.distance(xyList, tour.get(tour.size() - 1), tour.get(0));
         return cost;
     }
 }

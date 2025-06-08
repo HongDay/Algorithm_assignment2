@@ -4,8 +4,8 @@ import java.io.*;
 
 class Main{
     public static void main(String[] args) throws IOException {
-        String filename = "kz9976.tsp";
-        String optfilename = "dataset/kz9976.tour";
+        String filename = "xql662.tsp";
+        String optfilename = "dataset/xql662.tour";
         // double[][] distMatrix = TspParser.parseTSPFile(filename);
         double[][] xyList = TspParser.parseTSPFile2("dataset/" + filename);
 
@@ -13,7 +13,7 @@ class Main{
         long beforeUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long startTime = System.nanoTime();
 
-        int[] tour = MyOwn.HKGreedySubTour(xyList);
+        int[] tour = MyOwn.HKDivideConquer(xyList);
 
         long endTime = System.nanoTime();
         long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();

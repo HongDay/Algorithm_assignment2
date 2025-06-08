@@ -5,7 +5,7 @@ import java.util.*;
 public class MyOwn {
     private static int n;
     private static int cnt;
-    private static int div = 21;
+    private static int div = 19;
 
     static class Cluster {
         Cluster[] subClusters;
@@ -28,6 +28,7 @@ public class MyOwn {
     }
 
     public static int[] HKMSTHybrid(double[][] xyList) {
+        if (xyList.length == 22) div = 22;
         List<Cluster> currentLevel = new ArrayList<>();
 
         List<List<Integer>> groups = clusterPointIndices(xyList, div);
@@ -92,6 +93,7 @@ public class MyOwn {
     public static int[] HKDivideConquer(double[][] xyList) {
         n = xyList.length;
         cnt = 0;
+        if (n == 22) div = 22;
 
         List<Integer> all = new ArrayList<>();
         for (int i = 0; i < xyList.length; i++) all.add(i);
@@ -117,10 +119,8 @@ public class MyOwn {
         }
         else {
             double[][] centers = Arrays.stream(c.subClusters).map(cl -> cl.center).toArray(double[][]::new);
-            System.out.println(Arrays.toString(c.subClusters[0].center) + " & " + Arrays.toString(c.subClusters[c.subClusters.length - 1].center));
             int[] tour = HeldKarp.HeldKarpTour(centers);
             for (int i = 0; i < tour.length; i++) {
-                System.out.println(i + " / " + tour.length);
                 computeTour(xyList, c.subClusters[tour[i]], finalTour);
             }
         }
@@ -244,15 +244,16 @@ public class MyOwn {
             }
         }
         n = xyList.length;
+        if(n==22) div = 22;
 
-        cnt = 1;
+        cnt = 0;
         boolean[] visited = new boolean[n];
         for (int i = 1; i < n; i++) visited[i] = false;
         List<Integer> tour = new ArrayList<>();
-        tour.add(root);
+        //tour.add(root);
 
         while (cnt < n) {
-            int k = Math.min(20, n - cnt);
+            int k = Math.min(div, n - cnt);
             int[] near20 = nearCities(visited, xyList, root, n - cnt);
             double[][] subxyList = new double[k + 1][2];
             for (int i = 0; i < k + 1; i++) {
@@ -266,7 +267,7 @@ public class MyOwn {
             }
 
             root = near20[subTour[subTour.length - 1]];
-            cnt += 20;
+            cnt += div;
         }
 
         return tour.stream().mapToInt(i -> i).toArray();

@@ -4,8 +4,8 @@ import java.io.*;
 
 class Main{
     public static void main(String[] args) throws IOException {
-        String filename = "xql662.tsp";
-        String optfilename = "dataset/xql662.tour";
+        String filename = "ulysses22.tsp";
+        String optfilename = "dataset/ulysses22.opt.tour";
         // double[][] distMatrix = TspParser.parseTSPFile(filename);
         double[][] xyList = TspParser.parseTSPFile2("dataset/" + filename);
 
@@ -14,6 +14,7 @@ class Main{
         long startTime = System.nanoTime();
 
         int[] tour = Greedy.GreedyInsertion(xyList);
+        String algname = "GreedyInsert";
 
         long endTime = System.nanoTime();
         long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
@@ -21,8 +22,8 @@ class Main{
         double elapsedTime = (endTime - startTime) / 1e6; // ms
         double usedMemory = (afterUsedMem - beforeUsedMem) / (1024.0 * 1024.0); // MB
 
-        makeTour.TourFile(tour, "output/" + filename + "_output.tour");
-        makePng.drawTourToPNG(xyList, tour, "output/" + filename + "_output.png");
+        makeTour.TourFile(tour, "output/" + filename + "_" + algname + ".tour");
+        makePng.drawTourToPNG(xyList, tour, "output/" + filename + "_" + algname + ".png");
 
         double cost = 0.0;
         for (int i = 0; i < tour.length - 1; i++) {
@@ -31,13 +32,13 @@ class Main{
         cost += ClrsApx.distance(xyList, tour[tour.length - 1], tour[0]);
 
         double optCost = GtCost.CalCost(optfilename, xyList);
-        // double optCost = 27603;
+        // double optCost = 5757084;
 
         double accuracy = (optCost / cost) * 100.0;
         double apxRatio = cost / optCost;
         // double gap = (cost - optCost) / optCost * 100.0;
 
-        System.out.println("\n[ " + filename + " - HeldKarpTour" + " ]");
+        System.out.println("\n[ " + filename + " - " + algname + " ]");
         System.out.printf("input size = %d\n", xyList.length);
         System.out.printf("exec time : %.2f ms\n", elapsedTime);
         System.out.printf("mem usage : %.2f MB\n", usedMemory);

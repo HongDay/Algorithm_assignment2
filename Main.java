@@ -13,7 +13,7 @@ class Main{
         long beforeUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         long startTime = System.nanoTime();
 
-        int[] tour = MyOwn.HKDivideConquer(xyList);
+        int[] tour = MyOwn.HKMSTHybrid(xyList);
 
         long endTime = System.nanoTime();
         long afterUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();

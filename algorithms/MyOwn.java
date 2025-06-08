@@ -27,6 +27,68 @@ public class MyOwn {
         }
     }
 
+    public static int[] HKMSTHybrid(double[][] xyList) {
+        List<Cluster> currentLevel = new ArrayList<>();
+
+        List<List<Integer>> groups = clusterPointIndices(xyList, div);
+
+        for (List<Integer> group : groups) {
+            int[] cities = group.stream().mapToInt(i -> i).toArray();
+            double[][] coords = Arrays.stream(cities).mapToObj(i -> xyList[i]).toArray(double[][]::new);
+            double[] center = computeMedian(coords);
+            currentLevel.add(new Cluster(cities, center));
+        }
+
+        double[][] centers = currentLevel.stream().map(c -> c.center).toArray(double[][]::new);
+        Cluster[] children = new Cluster[currentLevel.size()];
+        for (int i = 0; i < currentLevel.size(); i++) {
+            children[i] = currentLevel.get(i);
+        }
+        double[] newCenter = computeMedian(Arrays.stream(children).map(c -> c.center).toArray(double[][]::new));
+        Cluster c = new Cluster(children, newCenter);
+
+
+        List<Integer> finalTour = new ArrayList<>();
+
+        if (groups.size() > 22) {
+            int[] tour = ClrsApx.ApxTspTour(centers);
+            for (int i = 0; i < tour.length; i++){
+                Cluster subc = c.subClusters[tour[i]];
+                if (subc.cities.length <= 3) {
+                    for (int city : subc.cities) {
+                        finalTour.add(city);
+                    }
+                    break;
+                }
+                double[][] subCoords = Arrays.stream(subc.cities).mapToObj(k -> xyList[k]).toArray(double[][]::new);
+                int[] localTour = HeldKarp.HeldKarpTour(subCoords);
+                for (int j : localTour) {
+                    finalTour.add(subc.cities[j]);
+                }
+                
+            }
+        }
+        else {
+            int[] tour = HeldKarp.HeldKarpTour(centers);
+            for (int i = 0; i < tour.length; i++){
+                Cluster subc = c.subClusters[tour[i]];
+                if (subc.cities.length <= 3) {
+                    for (int city : subc.cities) {
+                        finalTour.add(city);
+                    }
+                    break;
+                }
+                double[][] subCoords = Arrays.stream(subc.cities).mapToObj(k -> xyList[k]).toArray(double[][]::new);
+                int[] localTour = HeldKarp.HeldKarpTour(subCoords);
+                for (int j : localTour) {
+                    finalTour.add(subc.cities[j]);
+                }
+                
+            }
+        }
+        return finalTour.stream().mapToInt(i -> i).toArray();
+    }
+
     public static int[] HKDivideConquer(double[][] xyList) {
         n = xyList.length;
         cnt = 0;
@@ -78,8 +140,6 @@ public class MyOwn {
 
         boolean firstMerge = (currentLevel.size() != 1);
 
-        System.out.println(currentLevel.size());
-
         while (currentLevel.size() > 1 || firstMerge) {
             firstMerge = false;
             List<Cluster> nextLevel = new ArrayList<>();
@@ -99,8 +159,6 @@ public class MyOwn {
 
         return currentLevel.get(0);
     }
-
-
 
     private static List<List<Integer>> clusterPointIndices(double[][] xyList, int k) {
         int groupn = xyList.length;
@@ -160,6 +218,7 @@ public class MyOwn {
 
         return groupList;
     }
+
 
     private static double[] computeMedian(double[][] coords) {
         int midn = coords.length;
